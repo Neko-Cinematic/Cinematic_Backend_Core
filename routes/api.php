@@ -64,6 +64,8 @@ Route::group(['prefix' => 'admin'], function () {
         Route::post('/delete', [ClientController::class, 'destroy']);
         Route::post('/update', [ClientController::class, 'update']);
         Route::post('/get-data', [ClientController::class, 'data']);
+        Route::post('/login', [ClientController::class, 'login']);
+        Route::post('/check-token', [ClientController::class, 'check']);
     });
     Route::group(['prefix' => 'employee'], function () {
         Route::post('/create', [EmployeeController::class, 'store']);

@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Employee;
 use App\Http\Controllers\Controller;
+use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class EmployeeController extends Controller
 {
@@ -19,19 +21,37 @@ class EmployeeController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function store(Request $request)
     {
-        //
+        try {
+            Employee::create([
+                'name'              => $request -> name,
+                'email'             => $request -> email,
+                'password'          => $request -> nampassworde,
+                'id_permissons'     => $request -> id_permissons,
+            ]);
+            return response()->json([
+                'status'  => true,
+                'message' => "Tạo mới nhân viên thành công",
+            ]);
+        } catch (\Throwable $th) {
+            return response()->json([
+                'status'  => false,
+                'message' => "Tạo mới nhân viên thất bại",
+            ]);
+        }
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function getData()
     {
-        //
+        $data = Employee::get();
+        return response()->json([
+            'create_employees_table'   => $data,
+        ]);
     }
-
     /**
      * Display the specified resource.
      */
@@ -51,16 +71,42 @@ class EmployeeController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Employee $employee)
+    public function updateDataEmployee(Request $request)
     {
-        //
+        try {
+            $check_id = $request->id;
+            $data = Employee::where("id", $check_id)->update([
+                'name'                  => $request -> name,
+            ]);
+            return response()->json([
+                'status' => true,
+                'message' => "update thành công !",
+            ]);
+        } catch (\Throwable $th) {
+            return response()->json([
+                'status' => false,
+                'message' => "update không thành công !",
+                'err' => $th
+            ]);
+        }
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Employee $employee)
-    {
-        //
+    public function destroy(Employee $id){
+        try {
+            Employee::where('id',$id)->delete();
+            return response()->json([
+                'status'            =>   true,
+                'message'           =>   'Xóa thành công!',
+            ]);
+        } catch (Exception $e) {
+            Log::info("Lỗi",$e);
+            return response()->json([
+                'status'            =>   false,
+                'message'           =>   'Có lỗi',
+            ]);
+        }
     }
 }
