@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\ActorController;
+use App\Http\Controllers\ActorRelController;
 use App\Http\Controllers\AuthorController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\CountryController;
@@ -72,5 +74,30 @@ Route::group(['prefix' => 'admin'], function () {
         Route::post('/delete', [EmployeeController::class, 'destroy']);
         Route::post('/update', [EmployeeController::class, 'update']);
         Route::post('/get-data', [EmployeeController::class, 'data']);
+    });
+
+    Route::group(['prefix' => 'actor-rel'], function () {
+        Route::post('/create', [ActorRelController::class, 'store']);
+        Route::post('/delete', [ActorRelController::class, 'destroy']);
+        Route::post('/update', [ActorRelController::class, 'update']);
+        Route::post('/get-data', [ActorRelController::class, 'data']);
+    });
+    Route::group(['prefix' => 'actor'], function () {
+        Route::post('/create', [ActorController::class, 'store']);
+        Route::post('/delete', [ActorController::class, 'destroy']);
+        Route::post('/update', [ActorController::class, 'update']);
+        Route::post('/get-data', [ActorController::class, 'data']);
+    });
+    Route::group(['prefix' => 'favourite'], function () {
+        Route::post('/create', [FavouritesController::class, 'store']);
+        Route::post('/delete', [FavouritesController::class, 'destroy']);
+        Route::post('/update', [FavouritesController::class, 'update']);
+        Route::post('/get-data', [FavouritesController::class, 'data']);
+    });
+    Route::group(['prefix' => 'type-rel'], function () {
+        Route::post('/create', [TypeRelController::class, 'store']);
+        Route::post('/delete', [TypeRelController::class, 'destroy']);
+        Route::post('/update', [TypeRelController::class, 'update']);
+        Route::post('/get-data', [TypeRelController::class, 'data']);
     });
 });

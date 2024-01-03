@@ -40,6 +40,14 @@ class CountrySeeder extends Seeder
                 'created_at' => $date,
                 'updated_at' => $date,
             ],
+            ['name' => 'Nga', 'created_at' => $date, 'updated_at' => $date],
+            ['name' => 'Pháp', 'created_at' => $date, 'updated_at' => $date],
+            ['name' => 'Đức', 'created_at' => $date, 'updated_at' => $date],
+            ['name' => 'Úc', 'created_at' => $date, 'updated_at' => $date],
+            ['name' => 'Brazil', 'created_at' => $date, 'updated_at' => $date],
+            ['name' => 'Ấn Độ', 'created_at' => $date, 'updated_at' => $date],
+            ['name' => 'Ý', 'created_at' => $date, 'updated_at' => $date],
+            ['name' => 'Thụy Điển', 'created_at' => $date, 'updated_at' => $date],
         ]);
     }
 }

@@ -16,59 +16,87 @@ use Illuminate\Support\Facades\DB;
 
 class MovieController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    public function data()
     {
-        //
+        $data = Movie::join("languages", "id_language_original", "languages.id")
+            ->select(
+                "name",
+                "movies.*"
+            )->get();
+        return response()->json($data);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
+        try {
+            $movie = Movie::create([
+                'original_name' => $request->original_name,
+                'vietnamese_name' => $request->vietnamese_name,
+                'id_image' => $request->id_image,
+                'description' => $request->description,
+                'rating' => 0,
+                'id_contries' => $request->id_contries,
+                'id_author' => $request->id_author,
+                'id_user_upload' => 1,
+                'id_language_original' => $request->id_language_original,
+                'date' => $request->date,
+                'views' => 0,
+            ]);
+            return response()->json([
+                'status' => true,
+                'message' => "Tạo mới thành công!",
+            ]);
+        } catch (\Throwable $th) {
+            return response()->json([
+                'status' => false,
+                'message' => "Tạo mới không thành công!",
+                'err' => $th
+            ]);
+        }
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Movie $movie)
+    public function update(Request $request)
     {
-        //
+        try {
+            $movie = Movie::where("id", $request->id)->update([
+                'original_name' => $request->original_name,
+                'vietnamese_name' => $request->vietnamese_name,
+                'id_image' => $request->id_image,
+                'description' => $request->description,
+                'id_contries' => $request->id_contries,
+                'id_author' => $request->id_author,
+                'id_language_original' => $request->id_language_original,
+                'date' => $request->date,
+            ]);
+
+            return response()->json([
+                'status' => true,
+                'message' => "Cập nhật thành công!",
+            ]);
+        } catch (\Throwable $th) {
+            return response()->json([
+                'status' => false,
+                'message' => "Cập nhật không thành công!",
+                'err' => $th
+            ]);
+        }
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Movie $movie)
+    public function destroy(Request $request)
     {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Movie $movie)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Movie $movie)
-    {
-        //
+        try {
+            $data = Movie::where("id", $request->id)->first();
+            $data->delete();
+            return response()->json([
+                'status' => true,
+                'message' => "Xóa thành công!",
+            ]);
+        } catch (\Throwable $th) {
+            return response()->json([
+                'status' => false,
+                'message' => "Xóa không thành công!",
+                'err' => $th
+            ]);
+        }
     }
 }

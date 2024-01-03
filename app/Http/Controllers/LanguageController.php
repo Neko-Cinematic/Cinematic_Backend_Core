@@ -8,59 +8,65 @@ use Illuminate\Http\Request;
 
 class LanguageController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    public function data()
     {
-        //
+        $data = Language::select()->get();
+        return response()->json($data);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
+        try {
+            Language::create([
+                'name' => $request->name,
+            ]);
+
+
+            return response()->json([
+                'status' => true,
+                'message' => "Tạo mới thành công",
+            ]);
+        } catch (\Throwable $th) {
+            return response()->json([
+                'status' => false,
+                'message' => "Lỗi tạo mới không thành công !",
+            ]);
+        }
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Language $language)
+    public function update(Request $request)
     {
-        //
+        try {
+            $check_id = $request->id;
+            $data = Language::where("id", $check_id)->update([
+                'name' => $request->name,
+            ]);
+            return response()->json([
+                'status' => true,
+                'message' => "Cập nhật thành công!",
+            ]);
+        } catch (\Throwable $th) {
+            return response()->json([
+                'status' => false,
+                'message' => "Cập nhật không thành công!",
+            ]);
+        }
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Language $language)
+    public function destroy(Request $request)
     {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Language $language)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Language $language)
-    {
-        //
+        try {
+            $data = Language::where("id", $request->id)->first();
+            $data->delete();
+            return response()->json([
+                'status' => true,
+                'message' => "Xóa thành công!",
+            ]);
+        } catch (\Throwable $th) {
+            return response()->json([
+                'status' => false,
+                'message' => "Xóa không thành công!",
+            ]);
+        }
     }
 }
