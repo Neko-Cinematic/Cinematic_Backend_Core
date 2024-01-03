@@ -8,59 +8,54 @@ use Illuminate\Http\Request;
 
 class EpisodeController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    public function data()
     {
-        //
+        $data = Episode::join('movies', 'id_movies', 'movies.id')->select(
+            'original_name',
+            'episodes.*',
+        )->get();
+        return response()->json($data);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
         //
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Episode $episode)
+    public function update(Request $request)
     {
-        //
+        try {
+            Episode::where("id", $request->id)->update([
+                'num_eps' => $request->num_eps,
+                'id_movies' => $request->id_movies,
+                'url' => $request->url,
+            ]);
+            return response()->json([
+                'status' => true,
+                'message' => "Cập nhật thành công!",
+            ]);
+        } catch (\Throwable $th) {
+            return response()->json([
+                'status' => false,
+                'message' => "Cập nhật không thành công!",
+            ]);
+        }
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Episode $episode)
+    public function destroy(Request $request)
     {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Episode $episode)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Episode $episode)
-    {
-        //
+        try {
+            $data = Episode::where("id", $request->id)->first();
+            $data->delete();
+            return response()->json([
+                'status' => true,
+                'message' => "Xóa thành công!",
+            ]);
+        } catch (\Throwable $th) {
+            return response()->json([
+                'status' => false,
+                'message' => "Xóa không thành công!",
+            ]);
+        }
     }
 }
