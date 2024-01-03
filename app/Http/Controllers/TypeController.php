@@ -4,7 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\Type;
 use App\Http\Controllers\Controller;
+use Exception;
+use FFI\CType;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class TypeController extends Controller
 {
@@ -19,17 +22,37 @@ class TypeController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function store(Request $request)
     {
-        //
+        try {
+            Type::create([
+                'name'                  => $request -> name,
+                'email'                 => $request -> email,
+                'password'              => $request -> password,
+                'forget_password_token' => $request -> forget_password_token,
+                'email_verify_token'    => $request -> email_verify_token,
+            ]);
+            return response()-> json([
+                'message'           => 'Tạo mới thể loại thành công!',
+                'status'            => true,
+            ]);
+        } catch (\Throwable $th) {
+            return response()-> json([
+                'message'           => 'that bai',
+                'status'             => false,
+            ]);
+        }
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function getData(Request $request)
     {
-        //
+        $data = Type::get();
+        return response()->json([
+            'create_clients_table'   => $data,
+        ]);
     }
 
     /**
@@ -51,16 +74,42 @@ class TypeController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Type $type)
+    public function updateDataType(Request $request)
     {
-        //
+        try {
+            $check_id = $request->id;
+            $data = Type::where("id", $check_id)->update([
+                'name'                  => $request -> name,
+            ]);
+            return response()->json([
+                'status' => true,
+                'message' => "update thành công !",
+            ]);
+        } catch (\Throwable $th) {
+            return response()->json([
+                'status' => false,
+                'message' => "update không thành công !",
+                'err' => $th
+            ]);
+        }
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Type $type)
-    {
-        //
+    public function destroy(Type $id){
+        try {
+            Type::where('id',$id)->delete();
+            return response()->json([
+                'status'            =>   true,
+                'message'           =>   'Xóa thể loại thành công!',
+            ]);
+        } catch (Exception $e) {
+            Log::info("Lỗi",$e);
+            return response()->json([
+                'status'            =>   false,
+                'message'           =>   'Có lỗi',
+            ]);
+        }
     }
 }
