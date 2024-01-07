@@ -70,7 +70,7 @@ class CountryController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function updateDataCountry(Request $request)
+    public function update(Request $request)
     {
         try {
             $check_id = $request->id;

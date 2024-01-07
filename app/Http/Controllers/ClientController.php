@@ -80,7 +80,7 @@ class ClientController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function updateDataClient(Request $request)
+    public function update(Request $request)
     {
         try {
             $check_id = $request->id;

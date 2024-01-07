@@ -71,7 +71,7 @@ class EmployeeController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function updateDataEmployee(Request $request)
+    public function update(Request $request)
     {
         try {
             $check_id = $request->id;
@@ -94,7 +94,7 @@ class EmployeeController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Employee $id){
+        public function destroy(Employee $id){
         try {
             Employee::where('id',$id)->delete();
             return response()->json([

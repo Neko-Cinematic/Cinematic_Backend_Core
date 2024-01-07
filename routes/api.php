@@ -71,6 +71,6 @@ Route::group(['prefix' => 'admin'], function () {
         Route::post('/create', [EmployeeController::class, 'store']);
         Route::post('/delete', [EmployeeController::class, 'destroy']);
         Route::post('/update', [EmployeeController::class, 'update']);
-        Route::post('/get-data', [EmployeeController::class, 'data']);
+        Route::post('/get-data', [EmployeeController::class, 'getData']);
     });
 });
