@@ -45,6 +45,21 @@ class LanguageSeeder extends Seeder
                 'created_at' => $date,
                 'updated_at' => $date,
             ],
+            [
+                'name' => 'Espanol',
+                'created_at' => $date,
+                'updated_at' => $date,
+            ],
+            [
+                'name' => 'Italiano',
+                'created_at' => $date,
+                'updated_at' => $date,
+            ],
+            [
+                'name' => 'Brazil',
+                'created_at' => $date,
+                'updated_at' => $date,
+            ],
         ]);
     }
 }
