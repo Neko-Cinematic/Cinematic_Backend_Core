@@ -10,25 +10,13 @@ use Illuminate\Support\Facades\Log;
 
 class EmployeeController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
     public function store(Request $request)
     {
         try {
             Employee::create([
                 'name'              => $request -> name,
                 'email'             => $request -> email,
-                'password'          => $request -> nampassworde,
-                'id_permissons'     => $request -> id_permissons,
+                'password'          => $request -> password,
             ]);
             return response()->json([
                 'status'  => true,
@@ -49,34 +37,18 @@ class EmployeeController extends Controller
     {
         $data = Employee::get();
         return response()->json([
-            'create_employees_table'   => $data,
+            'data'   => $data,
         ]);
     }
-    /**
-     * Display the specified resource.
-     */
-    public function show(Employee $employee)
-    {
-        //
-    }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Employee $employee)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request)
     {
         try {
             $check_id = $request->id;
             $data = Employee::where("id", $check_id)->update([
                 'name'                  => $request -> name,
+                'email'                 => $request -> email,
+                'password'              => $request -> password,
             ]);
             return response()->json([
                 'status' => true,
@@ -91,12 +63,9 @@ class EmployeeController extends Controller
         }
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-        public function destroy(Employee $id){
+        public function destroy(Request $request){
         try {
-            Employee::where('id',$id)->delete();
+            Employee::where('id',$request->id)->delete();
             return response()->json([
                 'status'            =>   true,
                 'message'           =>   'Xóa thành công!',

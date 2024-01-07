@@ -11,9 +11,7 @@ use Illuminate\Support\Facades\Log;
 
 class AuthorController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+
     public function index()
     {
         //
@@ -27,9 +25,6 @@ class AuthorController extends Controller
         ]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function store(Request $request)
     {
 
@@ -47,30 +42,6 @@ class AuthorController extends Controller
 
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(Author $author)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Author $author)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request)
     {
         try {
@@ -91,17 +62,10 @@ class AuthorController extends Controller
         }
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    // public function destroy(Author $author)
-    // {
-    //     //
-    // }
 
-    public function destroy(Author $id){
+    public function destroy(Request $request){
         try {
-            Author::where('id',$id)->delete();
+            Author::where('id',$request->id)->delete();
             return response()->json([
                 'status'            =>   true,
                 'message'           =>   'Xóa thành công!',

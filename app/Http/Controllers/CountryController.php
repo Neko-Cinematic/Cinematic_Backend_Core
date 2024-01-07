@@ -47,29 +47,10 @@ class CountryController extends Controller
     {
         $data = Country::get();
         return response()->json([
-            'create_countries_table'   => $data,
+            'data'   => $data,
         ]);
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Country $country)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Country $country)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request)
     {
         try {
@@ -93,9 +74,9 @@ class CountryController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Country $id){
+    public function destroy(Request $request){
         try {
-            Client::where('id',$id)->delete();
+            Country::where('id',$request->id)->delete();
             return response()->json([
                 'status'            =>   true,
                 'message'           =>   'Xóa thành công!',

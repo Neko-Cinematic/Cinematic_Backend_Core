@@ -97,9 +97,9 @@ class TypeController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Type $id){
+    public function destroy(Request $request){
         try {
-            Type::where('id',$id)->delete();
+            Type::where('id',$request->id)->delete();
             return response()->json([
                 'status'            =>   true,
                 'message'           =>   'Xóa thể loại thành công!',

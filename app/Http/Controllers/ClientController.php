@@ -107,9 +107,9 @@ class ClientController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Client $id){
+    public function destroy(Request $request){
         try {
-            Client::where('id',$id)->delete();
+            Client::where('id',$request->id)->delete();
             return response()->json([
                 'status'            =>   true,
                 'message'           =>   'Xóa thành công!',

@@ -33,7 +33,7 @@ Route::group(['prefix' => 'admin'], function () {
         Route::post('/create', [LanguageController::class, 'store']);
         Route::post('/delete', [LanguageController::class, 'destroy']);
         Route::post('/update', [LanguageController::class, 'update']);
-        Route::post('/get-data', [LanguageController::class, 'data']);
+        Route::get('/get-data', [LanguageController::class, 'data']);
     });
     Route::group(['prefix' => 'episode'], function () {
         Route::post('/create', [EpisodeController::class, 'store']);
@@ -51,7 +51,7 @@ Route::group(['prefix' => 'admin'], function () {
         Route::post('/create', [CountryController::class, 'store']);
         Route::post('/delete', [CountryController::class, 'destroy']);
         Route::post('/update', [CountryController::class, 'update']);
-        Route::post('/get-data', [CountryController::class, 'data']);
+        Route::post('/get-data', [CountryController::class, 'getData']);
     });
     Route::group(['prefix' => 'type'], function () {
         Route::post('/create', [TypeController::class, 'store']);
