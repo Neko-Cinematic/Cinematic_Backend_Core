@@ -29,6 +29,7 @@ class DatabaseSeeder extends Seeder
             CountrySeeder::class,
             ActorRelsSeeder::class,
             MovieSeeder::class,
+            EmployeeSeeder::class,
         ]); // Call all seeder
     }
 }

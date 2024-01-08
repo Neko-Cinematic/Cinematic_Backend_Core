@@ -17,7 +17,7 @@ class ActorRelController extends Controller
                 "name",
                 "actor_rels.*"
             )->get();
-        return response()->json($data);
+        return response()->json(['data' => $data]);
     }
 
     public function store(Request $request)
@@ -83,6 +83,6 @@ class ActorRelController extends Controller
     {
         $check_id_movies = $request->id_movies;
         $data = ActorRel::where('id_movies', $check_id_movies)->get();
-        return response()->json($data);
+        return response()->json(['data' => $data]);
     }
 }
