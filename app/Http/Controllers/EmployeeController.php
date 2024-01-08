@@ -47,4 +47,73 @@ class EmployeeController extends Controller
             ]);
         }
     }
+
+    public function store(Request $request)
+    {
+        try {
+            Employee::create([
+                'name'              => $request -> name,
+                'email'             => $request -> email,
+                'password'          => bcrypt($request -> password),
+            ]);
+            return response()->json([
+                'status'  => true,
+                'message' => "Tạo mới nhân viên thành công",
+            ]);
+        } catch (\Throwable $th) {
+            return response()->json([
+                'status'  => false,
+                'message' => "Tạo mới nhân viên thất bại",
+            ]);
+        }
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function data()
+    {
+        $data = Employee::get();
+        return response()->json([
+            'data'   => $data,
+        ]);
+    }
+
+    public function update(Request $request)
+    {
+        try {
+            $check_id = $request->id;
+            $data = Employee::where("id", $check_id)->update([
+                'name'                  => $request -> name,
+                'email'                 => $request -> email,
+                'password'              => $request -> password,
+            ]);
+            return response()->json([
+                'status' => true,
+                'message' => "update thành công !",
+            ]);
+        } catch (\Throwable $th) {
+            return response()->json([
+                'status' => false,
+                'message' => "update không thành công !",
+                'err' => $th
+            ]);
+        }
+    }
+
+        public function destroy(Request $request){
+        try {
+            Employee::where('id',$request->id)->delete();
+            return response()->json([
+                'status'            =>   true,
+                'message'           =>   'Xóa thành công!',
+            ]);
+        } catch (Exception $e) {
+            Log::info("Lỗi",$e);
+            return response()->json([
+                'status'            =>   false,
+                'message'           =>   'Có lỗi',
+            ]);
+        }
+    }
 }

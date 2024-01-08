@@ -23,7 +23,7 @@ class AuthorController extends Controller
     {
         $data = Author::join('images', 'images.id', 'authors.id_images')
         ->join("movies","authors.id","id_author")
-        ->select('original_name','images.url', 'authors.*') 
+        ->select('original_name','images.url', 'authors.*')
   ->get();
         return response()->json([
             'data'   => $data,
@@ -48,25 +48,15 @@ class AuthorController extends Controller
         ]);
     }
 
-
-    public function show(Author $author)
-    {
-
-    }
-
-
-    public function edit(Author $author)
-    {
-        //
-    }
-
-
-    public function updateDataAuthor(Request $request)
+    public function update(Request $request)
     {
         try {
             $check_id = $request->id;
             $data = Author::where("id", $check_id)->update([
                 'name'      => $request->name,
+            ]);
+            $data = Image::where("id", $check_id)->update([
+                'url'      => $request->url,
             ]);
             return response()->json([
                 'status' => true,
@@ -89,10 +79,10 @@ class AuthorController extends Controller
     //     //
     // }
 
-    public function destroy(Author $id)
+    public function destroy(Request $request)
     {
         try {
-            Author::where('id', $id)->delete();
+            Author::where('id', $request->id)->delete();
             return response()->json([
                 'status'            =>   true,
                 'message'           =>   'Xóa thành công!',
