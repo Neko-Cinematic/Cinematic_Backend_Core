@@ -27,7 +27,7 @@ class ClientController extends Controller
     {
         $data = Client::get();
         return response()->json([
-            'create_clients_table'   => $data,
+            'data'   => $data,
         ]);
     }
 
@@ -40,22 +40,21 @@ class ClientController extends Controller
     {
         try {
             Client::create([
-                'name'                  => $request -> name,
-                'email'                 => $request -> email,
+                'name'                  => $request->name,
+                'email'                 => $request->email,
                 'password'              => bcrypt($request->password),
                 'forget_password_token' => "",
                 'email_verify_token'    => "",
             ]);
-            return response()-> json([
+            return response()->json([
                 'message'           => 'thanh cong',
                 'status'            => true,
             ]);
         } catch (\Throwable $th) {
-            return response()-> json([
+            return response()->json([
                 'message'               => 'that bai',
                 'status'                => false,
             ]);
-
         }
     }
 
@@ -85,11 +84,11 @@ class ClientController extends Controller
         try {
             $check_id = $request->id;
             $data = Client::where("id", $check_id)->update([
-                'name'                  => $request -> name,
-                'email'                 => $request -> email,
-                'password'              => $request -> password,
-                'forget_password_token' => $request -> forget_password_token,
-                'email_verify_token'    => $request -> email_verify_token,
+                'name'                  => $request->name,
+                'email'                 => $request->email,
+                'password'              => $request->password,
+                'forget_password_token' => $request->forget_password_token,
+                'email_verify_token'    => $request->email_verify_token,
             ]);
             return response()->json([
                 'status' => true,
@@ -107,15 +106,16 @@ class ClientController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Client $id){
+    public function destroy(Client $id)
+    {
         try {
-            Client::where('id',$id)->delete();
+            Client::where('id', $id)->delete();
             return response()->json([
                 'status'            =>   true,
                 'message'           =>   'Xóa thành công!',
             ]);
         } catch (Exception $e) {
-            Log::info("Lỗi",$e);
+            Log::info("Lỗi", $e);
             return response()->json([
                 'status'            =>   false,
                 'message'           =>   'Có lỗi',
@@ -123,9 +123,10 @@ class ClientController extends Controller
         }
     }
 
-    public function login(Request $request){
+    public function login(Request $request)
+    {
         $check = Auth::guard('client')->attempt(['email' => $request->email, 'password' => $request->password]);
-        if($check == true) {
+        if ($check == true) {
             $user = Auth::guard('client')->user();
             return response()->json([
                 'message'    => 'Đã đăng nhập!!!',
@@ -140,4 +141,3 @@ class ClientController extends Controller
         }
     }
 }
-

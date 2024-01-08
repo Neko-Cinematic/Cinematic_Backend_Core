@@ -14,7 +14,7 @@ class TypeController extends Controller
     public function data()
     {
         $data = Type::select()->get();
-        return response()->json($data);
+        return response()->json(['data' => $data]);
     }
 
     public function store(Request $request)

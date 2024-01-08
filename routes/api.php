@@ -10,6 +10,7 @@ use App\Http\Controllers\EpisodeController;
 use App\Http\Controllers\LanguageController;
 use App\Http\Controllers\MovieController;
 use App\Http\Controllers\TypeController;
+use App\Http\Controllers\UpFileController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -88,16 +89,18 @@ Route::group(['prefix' => 'admin'], function () {
         Route::post('/update', [ActorController::class, 'update']);
         Route::post('/get-data', [ActorController::class, 'data']);
     });
-    Route::group(['prefix' => 'favourite'], function () {
-        Route::post('/create', [FavouritesController::class, 'store']);
-        Route::post('/delete', [FavouritesController::class, 'destroy']);
-        Route::post('/update', [FavouritesController::class, 'update']);
-        Route::post('/get-data', [FavouritesController::class, 'data']);
-    });
-    Route::group(['prefix' => 'type-rel'], function () {
-        Route::post('/create', [TypeRelController::class, 'store']);
-        Route::post('/delete', [TypeRelController::class, 'destroy']);
-        Route::post('/update', [TypeRelController::class, 'update']);
-        Route::post('/get-data', [TypeRelController::class, 'data']);
-    });
+    // Route::group(['prefix' => 'favourite'], function () {
+    //     Route::post('/create', [FavouritesController::class, 'store']);
+    //     Route::post('/delete', [FavouritesController::class, 'destroy']);
+    //     Route::post('/update', [FavouritesController::class, 'update']);
+    //     Route::post('/get-data', [FavouritesController::class, 'data']);
+    // });
+    // Route::group(['prefix' => 'type-rel'], function () {
+    //     Route::post('/create', [TypeRelController::class, 'store']);
+    //     Route::post('/delete', [TypeRelController::class, 'destroy']);
+    //     Route::post('/update', [TypeRelController::class, 'update']);
+    //     Route::post('/get-data', [TypeRelController::class, 'data']);
+    // });
+
+    Route::post('/up-file', [UpFileController::class, 'upFile']);
 });

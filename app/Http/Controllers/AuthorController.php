@@ -21,9 +21,9 @@ class AuthorController extends Controller
 
     public function data()
     {
-        $data = Author::join('images','images.id', 'authors.id_images')->select('images.url','authors.*')->get();
+        $data = Author::join('images', 'images.id', 'authors.id_images')->select('images.url', 'authors.*')->get();
         return response()->json([
-            'create_authors_table'   => $data,
+            'data'   => $data,
         ]);
     }
 
@@ -34,17 +34,16 @@ class AuthorController extends Controller
     {
 
         $img = Image::create([
-            'url'            =>$request->url_avatar,
+            'url'            => $request->url_avatar,
         ]);
         Author::create([
             'name'           => $request->name,
-            'id_images'       => $img->id   ,
+            'id_images'       => $img->id,
         ]);
         return response()->json([
             'status'            =>   true,
             'message'           =>   'Đã tạo mới tác giả thành công!',
         ]);
-
     }
 
     /**
@@ -99,15 +98,16 @@ class AuthorController extends Controller
     //     //
     // }
 
-    public function destroy(Author $id){
+    public function destroy(Author $id)
+    {
         try {
-            Author::where('id',$id)->delete();
+            Author::where('id', $id)->delete();
             return response()->json([
                 'status'            =>   true,
                 'message'           =>   'Xóa thành công!',
             ]);
         } catch (Exception $e) {
-            Log::info("Lỗi",$e);
+            Log::info("Lỗi", $e);
             return response()->json([
                 'status'            =>   false,
                 'message'           =>   'Có lỗi',

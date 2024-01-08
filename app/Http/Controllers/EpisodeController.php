@@ -8,18 +8,23 @@ use Illuminate\Http\Request;
 
 class EpisodeController extends Controller
 {
-    public function data()
+    public function data(Request $request)
     {
-        $data = Episode::join('movies', 'id_movies', 'movies.id')->select(
-            'original_name',
-            'episodes.*',
-        )->get();
-        return response()->json($data);
+        $data = Episode::where('id_movies', $request->id_movie)->get();
+        return response()->json(['data' => $data]);
     }
 
     public function store(Request $request)
     {
-        //
+        Episode::create([
+            'num_eps'   => $request->num_eps,
+            'id_movies' => $request->id_movie,
+            'url'       => $request->filename,
+        ]);
+        return response()->json([
+            'status' => 1,
+            'message' => 'Tạo mới thành công!'
+        ]);
     }
 
     public function update(Request $request)

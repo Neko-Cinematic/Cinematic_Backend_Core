@@ -114,7 +114,7 @@ class ImageSeeder extends Seeder
                 'updated_at' => $date,
             ],
             [
-                'url' => 'https://image.tmdb.org/t/p/w342/7DKpFBcZNZWsmApAtYhuQWo1LJD.jpg',
+                'url' => '/images/a-journey-to-love-(season-1).jpg',
                 'created_at' => $date,
                 'updated_at' => $date,
             ],

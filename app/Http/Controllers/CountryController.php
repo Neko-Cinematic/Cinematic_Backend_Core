@@ -26,14 +26,14 @@ class CountryController extends Controller
     {
         try {
             Country::create([
-                'name'                  => $request -> name,
+                'name'                  => $request->name,
             ]);
-            return response()-> json([
+            return response()->json([
                 'message'           => 'thanh cong',
                 'status'            => true,
             ]);
         } catch (\Throwable $th) {
-            return response()-> json([
+            return response()->json([
                 'message'           => 'that bai',
                 'status'             => false,
             ]);
@@ -43,11 +43,11 @@ class CountryController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function getData(Request $request)
+    public function data(Request $request)
     {
         $data = Country::get();
         return response()->json([
-            'create_countries_table'   => $data,
+            'data'   => $data,
         ]);
     }
 
@@ -75,7 +75,7 @@ class CountryController extends Controller
         try {
             $check_id = $request->id;
             $data = Country::where("id", $check_id)->update([
-                'name'                  => $request -> name,
+                'name'                  => $request->name,
             ]);
             return response()->json([
                 'status' => true,
@@ -93,15 +93,16 @@ class CountryController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Country $id){
+    public function destroy(Country $id)
+    {
         try {
-            Client::where('id',$id)->delete();
+            Client::where('id', $id)->delete();
             return response()->json([
                 'status'            =>   true,
                 'message'           =>   'Xóa thành công!',
             ]);
         } catch (Exception $e) {
-            Log::info("Lỗi",$e);
+            Log::info("Lỗi", $e);
             return response()->json([
                 'status'            =>   false,
                 'message'           =>   'Có lỗi',

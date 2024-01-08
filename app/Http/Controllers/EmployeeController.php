@@ -25,10 +25,10 @@ class EmployeeController extends Controller
     {
         try {
             Employee::create([
-                'name'              => $request -> name,
-                'email'             => $request -> email,
-                'password'          => $request -> nampassworde,
-                'id_permissons'     => $request -> id_permissons,
+                'name'              => $request->name,
+                'email'             => $request->email,
+                'password'          => $request->nampassworde,
+                'id_permissons'     => $request->id_permissons,
             ]);
             return response()->json([
                 'status'  => true,
@@ -45,11 +45,11 @@ class EmployeeController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function getData()
+    public function data()
     {
         $data = Employee::get();
         return response()->json([
-            'create_employees_table'   => $data,
+            'data'   => $data,
         ]);
     }
     /**
@@ -76,7 +76,7 @@ class EmployeeController extends Controller
         try {
             $check_id = $request->id;
             $data = Employee::where("id", $check_id)->update([
-                'name'                  => $request -> name,
+                'name'                  => $request->name,
             ]);
             return response()->json([
                 'status' => true,
@@ -94,15 +94,16 @@ class EmployeeController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Employee $id){
+    public function destroy(Employee $id)
+    {
         try {
-            Employee::where('id',$id)->delete();
+            Employee::where('id', $id)->delete();
             return response()->json([
                 'status'            =>   true,
                 'message'           =>   'Xóa thành công!',
             ]);
         } catch (Exception $e) {
-            Log::info("Lỗi",$e);
+            Log::info("Lỗi", $e);
             return response()->json([
                 'status'            =>   false,
                 'message'           =>   'Có lỗi',
