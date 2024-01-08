@@ -6,107 +6,44 @@ use App\Models\Employee;
 use App\Http\Controllers\Controller;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 
 class EmployeeController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    public function login(Request $request)
     {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function store(Request $request)
-    {
-        try {
-            Employee::create([
-                'name'              => $request->name,
-                'email'             => $request->email,
-                'password'          => $request->nampassworde,
-                'id_permissons'     => $request->id_permissons,
-            ]);
+        $check = Auth::guard('employee')->attempt(['email' => $request->email, 'password' => $request->password]);
+        if ($check == true) {
+            $user = Auth::guard('employee')->user();
             return response()->json([
-                'status'  => true,
-                'message' => "Tạo mới nhân viên thành công",
+                'message'    => 'Đăng nhập thành công',
+                'status'     => true,
+                'token'      => $user->createToken('api-token-employee')->plainTextToken,
             ]);
-        } catch (\Throwable $th) {
+        } else {
             return response()->json([
-                'status'  => false,
-                'message' => "Tạo mới nhân viên thất bại",
+                'status'     =>   false,
+                'message'    =>   'Đăng nhập thất bại',
+                'email' => $request->email,
+                'pass' => $request->password,
             ]);
         }
     }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function data()
-    {
-        $data = Employee::get();
-        return response()->json([
-            'data'   => $data,
-        ]);
-    }
-    /**
-     * Display the specified resource.
-     */
-    public function show(Employee $employee)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Employee $employee)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function updateDataEmployee(Request $request)
-    {
+    public function check(){
+        $user = Auth::guard('sanctum')->user();
         try {
-            $check_id = $request->id;
-            $data = Employee::where("id", $check_id)->update([
-                'name'                  => $request->name,
-            ]);
-            return response()->json([
-                'status' => true,
-                'message' => "update thành công !",
-            ]);
+            if($user){
+                return response()->json([
+                    'name' => $user->name,
+                    'email' => $user->email,
+                    'status' => true
+                ]);
+            }
         } catch (\Throwable $th) {
             return response()->json([
-                'status' => false,
-                'message' => "update không thành công !",
-                'err' => $th
-            ]);
-        }
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Employee $id)
-    {
-        try {
-            Employee::where('id', $id)->delete();
-            return response()->json([
-                'status'            =>   true,
-                'message'           =>   'Xóa thành công!',
-            ]);
-        } catch (Exception $e) {
-            Log::info("Lỗi", $e);
-            return response()->json([
-                'status'            =>   false,
-                'message'           =>   'Có lỗi',
+                'err' => $th,
+                'status' => false
             ]);
         }
     }

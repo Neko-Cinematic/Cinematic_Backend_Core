@@ -11,7 +11,7 @@ class LanguageController extends Controller
     public function data()
     {
         $data = Language::select()->get();
-        return response()->json(['data' => $data]);
+        return response()->json($data);
     }
 
     public function store(Request $request)

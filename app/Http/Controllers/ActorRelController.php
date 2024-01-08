@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\ActorRel;
 use App\Http\Controllers\Controller;
+use App\Models\Actor;
 use Illuminate\Http\Request;
 
 class ActorRelController extends Controller
@@ -11,13 +12,13 @@ class ActorRelController extends Controller
     public function data()
     {
         $data = ActorRel::join("movies", "id_movie", "movies.id")
-            ->join("actors", "id_actor", "actors.id")
+            ->join("actors", "id_actor", "actors.id") //DO TRUY VẤN SAI
             ->select(
                 "original_name",
                 "name",
                 "actor_rels.*"
             )->get();
-        return response()->json(['data' => $data]);
+        return response()->json($data);
     }
 
     public function store(Request $request)
@@ -83,6 +84,6 @@ class ActorRelController extends Controller
     {
         $check_id_movies = $request->id_movies;
         $data = ActorRel::where('id_movies', $check_id_movies)->get();
-        return response()->json(['data' => $data]);
+        return response()->json($data);
     }
 }

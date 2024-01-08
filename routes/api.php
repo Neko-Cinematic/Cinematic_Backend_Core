@@ -75,6 +75,8 @@ Route::group(['prefix' => 'admin'], function () {
         Route::post('/delete', [EmployeeController::class, 'destroy']);
         Route::post('/update', [EmployeeController::class, 'update']);
         Route::post('/get-data', [EmployeeController::class, 'data']);
+        Route::post('/login', [EmployeeController::class, 'login']);
+        Route::post('/check-token', [EmployeeController::class, 'check']);
     });
 
     Route::group(['prefix' => 'actor-rel'], function () {

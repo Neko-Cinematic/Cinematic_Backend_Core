@@ -11,29 +11,19 @@ use Illuminate\Support\Facades\Log;
 
 class CountryController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        //
-    }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function store(Request $request)
     {
         try {
             Country::create([
-                'name'                  => $request->name,
+                'name'                  => $request -> name,
             ]);
-            return response()->json([
+            return response()-> json([
                 'message'           => 'thanh cong',
                 'status'            => true,
             ]);
         } catch (\Throwable $th) {
-            return response()->json([
+            return response()-> json([
                 'message'           => 'that bai',
                 'status'             => false,
             ]);
@@ -51,31 +41,12 @@ class CountryController extends Controller
         ]);
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Country $country)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Country $country)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function updateDataCountry(Request $request)
+    public function update(Request $request)
     {
         try {
             $check_id = $request->id;
             $data = Country::where("id", $check_id)->update([
-                'name'                  => $request->name,
+                'name'                  => $request -> name,
             ]);
             return response()->json([
                 'status' => true,
@@ -93,16 +64,15 @@ class CountryController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Country $id)
-    {
+    public function destroy(Request $request){
         try {
-            Client::where('id', $id)->delete();
+            Country::where('id',$request->id)->delete();
             return response()->json([
                 'status'            =>   true,
                 'message'           =>   'Xóa thành công!',
             ]);
         } catch (Exception $e) {
-            Log::info("Lỗi", $e);
+            Log::info("Lỗi",$e);
             return response()->json([
                 'status'            =>   false,
                 'message'           =>   'Có lỗi',
