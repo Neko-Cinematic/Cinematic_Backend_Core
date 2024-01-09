@@ -22,15 +22,15 @@ class ActorController extends Controller
 
     public function data()
     {
-        $data = Actor::join('images','actors.id_image' ,'images.id')
-        ->select("actors.id", 'images.url', "actors.name")
-        ->get();
+        $data = Actor::join('images', 'actors.id_image', 'images.id')
+            ->select("actors.id", DB::raw('CONCAT("' . env('APP_URL') . '", images.url) as url'), "actors.name")
+            ->get();
 
-        foreach($data as $actor) {
+        foreach ($data as $actor) {
             $list = ActorRel::join('movies', 'movies.id', 'actor_rels.id_movie')
-            ->where('actor_rels.id_actor', $actor->id)
-            ->select('movies.vietnamese_name as name')->get();
-            if(!$list) break;
+                ->where('actor_rels.id_actor', $actor->id)
+                ->select('movies.original_name as name')->get();
+            if (!$list) break;
             $actor['list_phim'] = '';
             foreach ($list as $value) {
                 $actor['list_phim'] .= $value->name . ',';
@@ -45,7 +45,7 @@ class ActorController extends Controller
     {
         try {
             $image = Image::create([
-                'url' => $request->url,
+                'url' => $request->filename,
             ]);
 
             Actor::create([
@@ -64,20 +64,19 @@ class ActorController extends Controller
                 "err" => $th,
             ]);
         }
-
     }
 
     public function update(Request $request)
     {
         try {
-         Actor::where('id', $request->id)->update([
+            Actor::where('id', $request->id)->update([
                 'name' => $request->name,
             ]);
 
 
-            Image::where('id',$request->id)->update([
+            Image::where('id', $request->id)->update([
                 'url' => $request->url,
-              ]);
+            ]);
 
             return response()->json([
                 'status' => true,
@@ -107,7 +106,7 @@ class ActorController extends Controller
                 'message' => "Xóa không thành công!",
                 'id' =>  $request->id,
                 'err' => $th
-             ]);
+            ]);
         }
     }
 }

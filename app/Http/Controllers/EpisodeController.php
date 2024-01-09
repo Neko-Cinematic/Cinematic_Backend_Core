@@ -11,7 +11,7 @@ class EpisodeController extends Controller
     public function data(Request $request)
     {
         $data = Episode::join('movies', 'id_movies', 'movies.id')
-            ->where('episodes.id_movie', $request->id_movie)
+            ->where('episodes.id_movies', $request->id_movie)
             ->select(
                 'original_name',
                 'episodes.*',

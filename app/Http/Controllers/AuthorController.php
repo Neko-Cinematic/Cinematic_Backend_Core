@@ -5,8 +5,10 @@ namespace App\Http\Controllers;
 use App\Models\Author;
 use App\Http\Controllers\Controller;
 use App\Models\Image;
+use App\Models\Movie;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class AuthorController extends Controller
@@ -15,9 +17,17 @@ class AuthorController extends Controller
     public function data()
     {
         $data = Author::join('images', 'images.id', 'authors.id_images')
-            ->join("movies", "authors.id", "id_author")
-            ->select('original_name', 'images.url', 'authors.*')
+            ->select(DB::raw('CONCAT("' . env('APP_URL') . '", images.url) as url'), 'authors.*')
             ->get();
+
+        foreach ($data as $author) {
+            $author['movies'] = '';
+            $list = Movie::where('id_author', $author->id)->get();
+            if ($list !== null) {
+                foreach ($list as $movie) $author['movies'] .= $movie->original_name . ', ';
+            }
+            $author['movies']  = rtrim($author['movies'], ', ');
+        }
         return response()->json([
             'data'   => $data,
         ]);
@@ -28,29 +38,44 @@ class AuthorController extends Controller
      */
     public function store(Request $request)
     {
-        $img = Image::create([
-            'url'            => $request->url,
-        ]);
-        Author::create([
-            'name'           => $request->name,
-            'id_images'       => $img->id,
-        ]);
-        return response()->json([
-            'status'            =>   true,
-            'message'           =>   'Đã tạo mới tác giả thành công!',
-        ]);
+        // return response()->json([
+        //     'status'            =>   $request->all(),
+        // ]);
+        try {
+            $img = Image::create([
+                'url'            => $request->filename,
+            ]);
+            Author::create([
+                'name'           => $request->name,
+                'id_images'       => $img->id,
+            ]);
+            return response()->json([
+                'status'            =>   true,
+                'message'           =>   'Tạo mới thành công!',
+            ]);
+        } catch (\Throwable $th) {
+            return response()->json([
+                'status'    =>   false,
+                'message'   =>   'Lỗi tạo mới không thành công!',
+                'err'       => $th
+            ]);
+        }
     }
 
     public function update(Request $request)
     {
         try {
+            return response()->json([
+                'data' => $request->all(),
+            ]);
             $check_id = $request->id;
-            $data = Author::where("id", $check_id)->update([
+            Author::where("id", $check_id)->update([
                 'name'      => $request->name,
             ]);
-            $data = Image::where("id", $check_id)->update([
-                'url'      => $request->url,
-            ]);
+            if ($request->filename)
+                Image::where("id", $check_id)->update([
+                    'url'      => $request->filename,
+                ]);
             return response()->json([
                 'status' => true,
                 'message' => "update thành công !",
@@ -63,14 +88,6 @@ class AuthorController extends Controller
             ]);
         }
     }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    // public function destroy(Author $author)
-    // {
-    //     //
-    // }
 
     public function destroy(Request $request)
     {
