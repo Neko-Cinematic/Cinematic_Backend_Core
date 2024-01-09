@@ -81,6 +81,7 @@ class EmployeeController extends Controller
             return response()->json([
                 'status' => true,
                 'message' => "update thành công !",
+                //
             ]);
         } catch (\Throwable $th) {
             return response()->json([
