@@ -11,11 +11,13 @@ use App\Models\Country;
 use App\Models\Episode;
 use App\Models\Image;
 use App\Models\Language;
+use App\Models\TypeRel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Stichoza\GoogleTranslate\GoogleTranslate;
+use Illuminate\Support\Facades\File;
 
 class MovieController extends Controller
 {
@@ -28,6 +30,7 @@ class MovieController extends Controller
             ->join('authors', 'authors.id', 'movies.id_author')
             ->select(
                 'movies.id',
+                'movies.id_image',
                 'movies.description',
                 'movies.original_name',
                 DB::raw('CONCAT("' . env('APP_URL') . '", images.url) as url'),
@@ -47,7 +50,7 @@ class MovieController extends Controller
                 'url' => $request->filename
             ]);
 
-            Movie::create([
+            $movie = Movie::create([
                 'original_name' => $request->original_name,
                 'vietnamese_name' => $this->translateToVietnamese($request->original_name),
                 'id_image' => $image->id,
@@ -61,9 +64,20 @@ class MovieController extends Controller
                 'views' => 0,
             ]);
 
+            $list_actor_rels = ActorRel::where('id_movie', 0)->get();
+            $list_type_rels = TypeRel::where('id_movie', 0)->get();
+
+            foreach ($list_type_rels as $type) {
+                $type->update(['id_movie' => $movie->id]);
+            }
+
+            foreach ($list_actor_rels as $actor) {
+                $actor->update(['id_movie' => $movie->id]);
+            }
+
             return response()->json([
-                'status' => true,
-                'message' => "Tạo mới thành công!",
+                'status'    => true,
+                'message'   => "Tạo mới thành công!",
             ]);
         } catch (\Throwable $th) {
             return response()->json([
@@ -104,8 +118,14 @@ class MovieController extends Controller
     public function destroy(Request $request)
     {
         try {
-            $data = Movie::where("id", $request->id)->first();
-            $data->delete();
+            $image = Image::where('id', $request->id_image)->first();
+            $arr = explode('/', $image->url);
+            if (Storage::disk('public/images')->exists($arr[2])) {
+                return response()->json('Có');
+                Storage::disk('public/images')->delete($arr[2]);
+            }
+            // $image->delete();
+            // Movie::where("id", $request->id)->delete();
             return response()->json([
                 'status' => true,
                 'message' => "Xóa thành công!",

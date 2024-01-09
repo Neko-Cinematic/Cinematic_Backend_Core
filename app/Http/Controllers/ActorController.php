@@ -7,11 +7,19 @@ use App\Http\Controllers\Controller;
 use App\Models\ActorRel;
 use App\Models\Image;
 use App\Models\Movie;
+use App\Models\TypeRel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class ActorController extends Controller
 {
+    public function search(Request $request)
+    {
+        $data = Actor::where('name', 'like', '%' . $request->key . '%')->get();
+
+        return response()->json(['data' => $data]);
+    }
+
     public function data()
     {
         $data = Actor::join('images','actors.id_image' ,'images.id')
@@ -40,10 +48,11 @@ class ActorController extends Controller
                 'url' => $request->url,
             ]);
 
-               Actor::create([
+            Actor::create([
                 'name' => $request->name,
                 'id_image' => $image->id,
             ]);
+
             return response()->json([
                 'status' => true,
                 'message' => "Tạo mới thành công!",

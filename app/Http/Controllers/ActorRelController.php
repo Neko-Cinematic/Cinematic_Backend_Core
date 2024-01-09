@@ -5,10 +5,21 @@ namespace App\Http\Controllers;
 use App\Models\ActorRel;
 use App\Http\Controllers\Controller;
 use App\Models\Actor;
+use App\Models\TypeRel;
 use Illuminate\Http\Request;
 
 class ActorRelController extends Controller
 {
+    public function dataChoosed(Request $request)
+    {
+        $data = ActorRel::join('actors', 'actors.id', 'actor_rels.id_actor')
+            ->where('actor_rels.id_movie', 0)
+            ->select('actors.name', 'actor_rels.role', 'actor_rels.id')
+            ->get();
+
+        return response()->json(['data' => $data]);
+    }
+
     public function data()
     {
         $data = ActorRel::join("movies", "id_movie", "movies.id")
@@ -25,11 +36,10 @@ class ActorRelController extends Controller
     {
         try {
             ActorRel::create([
-                'id_actor' => $request->id_actor,
-                'id_movie' => $request->id_movie,
-                'role' => $request->role,
+                'id_actor'  => $request->id_actor,
+                'id_movie'  => 0,
+                'role'      => $request->role
             ]);
-
             return response()->json([
                 'status' => true,
                 'message' => "Tạo mới thành công",
@@ -66,8 +76,7 @@ class ActorRelController extends Controller
     public function destroy(Request $request)
     {
         try {
-            $data = ActorRel::where("id", $request->id)->first();
-            $data->delete();
+            ActorRel::where('id', $request->id)->delete();
             return response()->json([
                 'status' => true,
                 'message' => "Xóa thành công!",
