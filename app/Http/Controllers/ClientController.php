@@ -31,14 +31,19 @@ class ClientController extends Controller
         ]);
     }
 
-
-
-    /**
-     * Show the form for creating a new resource.
-     */
     public function store(Request $request)
     {
         try {
+            $pass_length = strlen($request->password);
+            $pass = $request->password;
+
+            if($pass_length < 5 ){
+                return response()->json([
+                    'message'               => 'Mật khẩu quá yếu',
+                    'status'                => false,
+                ]);
+            }
+
             Client::create([
                 'name'                  => $request->name,
                 'email'                 => $request->email,
@@ -47,38 +52,28 @@ class ClientController extends Controller
                 'email_verify_token'    => "",
             ]);
             return response()->json([
-                'message'           => 'thanh cong',
+                'message'           => 'Đăng ký thành công',
                 'status'            => true,
             ]);
         } catch (\Throwable $th) {
             return response()->json([
-                'message'               => 'that bai',
+                'message'               => 'Đăng ký thất bại',
                 'status'                => false,
             ]);
         }
     }
 
-
-
-    /**
-     * Display the specified resource.
-     */
     public function show(Client $client)
     {
-        //
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
+
     public function edit(Client $client)
     {
-        //
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
+
+
     public function updateDataClient(Request $request)
     {
         try {
@@ -103,22 +98,20 @@ class ClientController extends Controller
         }
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Client $id)
+    public function destroy(Request $request)
     {
         try {
-            Client::where('id', $id)->delete();
+            $data = Client::where("id", $request->id)->first();
+            $data->delete();
             return response()->json([
-                'status'            =>   true,
-                'message'           =>   'Xóa thành công!',
+                'status' => true,
+                'message' => "Xóa thành công!",
             ]);
         } catch (Exception $e) {
             Log::info("Lỗi", $e);
             return response()->json([
                 'status'            =>   false,
-                'message'           =>   'Có lỗi',
+                'message'           =>   'Xóa thất bại!',
             ]);
         }
     }
@@ -129,14 +122,33 @@ class ClientController extends Controller
         if ($check == true) {
             $user = Auth::guard('client')->user();
             return response()->json([
-                'message'    => 'Đã đăng nhập!!!',
+                'message'    => 'Đăng nhập thành công',
                 'status'     => true,
                 'token'      => $user->createToken('api-token')->plainTextToken,
             ]);
         } else {
             return response()->json([
                 'status'     =>   false,
-                'message'    =>   'Thai bai',
+                'message'    =>   'Đăng nhập thất bại',
+            ]);
+        }
+    }
+
+    public function check(){
+        $user = Auth::guard('sanctum')->user();
+
+        try {
+            if($user){
+                return response()->json([
+                    'name' => $user->name,
+                    'email' => $user->email,
+                    'status' => true
+                ]);
+            }
+        } catch (\Throwable $th) {
+            return response()->json([
+                'err' => $th,
+                'status' => false
             ]);
         }
     }

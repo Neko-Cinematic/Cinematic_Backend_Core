@@ -6,8 +6,10 @@ use App\Models\Actor;
 use App\Http\Controllers\Controller;
 use App\Models\ActorRel;
 use App\Models\Image;
+use App\Models\Movie;
 use App\Models\TypeRel;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class ActorController extends Controller
 {
@@ -20,15 +22,30 @@ class ActorController extends Controller
 
     public function data()
     {
-        $data = Actor::select()->get();
-        return response()->json(['data' => $data]);
+        $data = Actor::join('images','actors.id_image' ,'images.id')
+        ->select("actors.id", 'images.url', "actors.name")
+        ->get();
+
+        foreach($data as $actor) {
+            $list = ActorRel::join('movies', 'movies.id', 'actor_rels.id_movie')
+            ->where('actor_rels.id_actor', $actor->id)
+            ->select('movies.vietnamese_name as name')->get();
+            if(!$list) break;
+            $actor['list_phim'] = '';
+            foreach ($list as $value) {
+                $actor['list_phim'] .= $value->name . ',';
+            }
+            $actor['list_phim'] = rtrim($actor['list_phim'], ',');
+        }
+
+        return response()->json($data);
     }
 
     public function store(Request $request)
     {
         try {
             $image = Image::create([
-                'url' => $request->filename
+                'url' => $request->url,
             ]);
 
             Actor::create([
@@ -44,18 +61,24 @@ class ActorController extends Controller
             return response()->json([
                 'status' => false,
                 'message' => "Tạo mới không thành công!",
+                "err" => $th,
             ]);
         }
+
     }
 
     public function update(Request $request)
     {
         try {
-            $check_id = $request->id;
-            $data = Actor::where("id", $check_id)->update([
+         Actor::where('id', $request->id)->update([
                 'name' => $request->name,
-                'id_image' => $request->id_image,
             ]);
+
+
+            Image::where('id',$request->id)->update([
+                'url' => $request->url,
+              ]);
+
             return response()->json([
                 'status' => true,
                 'message' => "Cập nhật thành công!",
@@ -64,6 +87,7 @@ class ActorController extends Controller
             return response()->json([
                 'status' => false,
                 'message' => "Cập nhật không thành công!",
+                'err' => $th
             ]);
         }
     }
@@ -81,7 +105,9 @@ class ActorController extends Controller
             return response()->json([
                 'status' => false,
                 'message' => "Xóa không thành công!",
-            ]);
+                'id' =>  $request->id,
+                'err' => $th
+             ]);
         }
     }
 }

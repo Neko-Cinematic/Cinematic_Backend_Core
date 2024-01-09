@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Type;
 use App\Http\Controllers\Controller;
+use Carbon\Carbon;
 use Exception;
 use FFI\CType;
 use Illuminate\Http\Request;
@@ -22,7 +23,7 @@ class TypeController extends Controller
     public function data()
     {
         $data = Type::select()->get();
-        return response()->json(['data' => $data]);
+        return response()->json($data);
     }
 
     public function store(Request $request)
@@ -33,6 +34,7 @@ class TypeController extends Controller
                 'description' => $request->description,
             ]);
 
+
             return response()->json([
                 'status' => true,
                 'message' => "Tạo mới thành công!",
@@ -41,7 +43,9 @@ class TypeController extends Controller
             return response()->json([
                 'status' => false,
                 'message' => "Tạo mới không thành công!",
-                'err' => $th
+                'err' => $th,
+                'id_1' => $request->name,
+                'id_2' => $request->description,
             ]);
         }
     }

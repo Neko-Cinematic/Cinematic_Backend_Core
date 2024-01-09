@@ -6,29 +6,55 @@ use App\Models\Employee;
 use App\Http\Controllers\Controller;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 
 class EmployeeController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    public function login(Request $request)
     {
-        //
+        $check = Auth::guard('employee')->attempt(['email' => $request->email, 'password' => $request->password]);
+        if ($check == true) {
+            $user = Auth::guard('employee')->user();
+            return response()->json([
+                'message'    => 'Đăng nhập thành công',
+                'status'     => true,
+                'token'      => $user->createToken('api-token-employee')->plainTextToken,
+            ]);
+        } else {
+            return response()->json([
+                'status'     =>   false,
+                'message'    =>   'Đăng nhập thất bại',
+                'email' => $request->email,
+                'pass' => $request->password,
+            ]);
+        }
+    }
+    public function check(){
+        $user = Auth::guard('sanctum')->user();
+        try {
+            if($user){
+                return response()->json([
+                    'name' => $user->name,
+                    'email' => $user->email,
+                    'status' => true
+                ]);
+            }
+        } catch (\Throwable $th) {
+            return response()->json([
+                'err' => $th,
+                'status' => false
+            ]);
+        }
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function store(Request $request)
     {
         try {
             Employee::create([
-                'name'              => $request->name,
-                'email'             => $request->email,
-                'password'          => $request->nampassworde,
-                'id_permissons'     => $request->id_permissons,
+                'name'              => $request -> name,
+                'email'             => $request -> email,
+                'password'          => bcrypt($request -> password),
             ]);
             return response()->json([
                 'status'  => true,
@@ -52,31 +78,15 @@ class EmployeeController extends Controller
             'data'   => $data,
         ]);
     }
-    /**
-     * Display the specified resource.
-     */
-    public function show(Employee $employee)
-    {
-        //
-    }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Employee $employee)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function updateDataEmployee(Request $request)
+    public function update(Request $request)
     {
         try {
             $check_id = $request->id;
             $data = Employee::where("id", $check_id)->update([
-                'name'                  => $request->name,
+                'name'                  => $request -> name,
+                'email'                 => $request -> email,
+                'password'              => $request -> password,
             ]);
             return response()->json([
                 'status' => true,
@@ -92,19 +102,15 @@ class EmployeeController extends Controller
         }
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Employee $id)
-    {
+        public function destroy(Request $request){
         try {
-            Employee::where('id', $id)->delete();
+            Employee::where('id',$request->id)->delete();
             return response()->json([
                 'status'            =>   true,
                 'message'           =>   'Xóa thành công!',
             ]);
         } catch (Exception $e) {
-            Log::info("Lỗi", $e);
+            Log::info("Lỗi",$e);
             return response()->json([
                 'status'            =>   false,
                 'message'           =>   'Có lỗi',

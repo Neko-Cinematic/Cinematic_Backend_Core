@@ -21,7 +21,10 @@ class AuthorController extends Controller
 
     public function data()
     {
-        $data = Author::join('images', 'images.id', 'authors.id_images')->select('images.url', 'authors.*')->get();
+        $data = Author::join('images', 'images.id', 'authors.id_images')
+        ->join("movies","authors.id","id_author")
+        ->select('original_name','images.url', 'authors.*')
+  ->get();
         return response()->json([
             'data'   => $data,
         ]);
@@ -32,9 +35,8 @@ class AuthorController extends Controller
      */
     public function store(Request $request)
     {
-
         $img = Image::create([
-            'url'            => $request->url_avatar,
+            'url'            => $request->url,
         ]);
         Author::create([
             'name'           => $request->name,
@@ -46,36 +48,15 @@ class AuthorController extends Controller
         ]);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(Author $author)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Author $author)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function updateDataAuthor(Request $request)
+    public function update(Request $request)
     {
         try {
             $check_id = $request->id;
             $data = Author::where("id", $check_id)->update([
                 'name'      => $request->name,
+            ]);
+            $data = Image::where("id", $check_id)->update([
+                'url'      => $request->url,
             ]);
             return response()->json([
                 'status' => true,
@@ -98,10 +79,10 @@ class AuthorController extends Controller
     //     //
     // }
 
-    public function destroy(Author $id)
+    public function destroy(Request $request)
     {
         try {
-            Author::where('id', $id)->delete();
+            Author::where('id', $request->id)->delete();
             return response()->json([
                 'status'            =>   true,
                 'message'           =>   'Xóa thành công!',
