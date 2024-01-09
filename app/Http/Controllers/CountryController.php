@@ -16,23 +16,21 @@ class CountryController extends Controller
     {
         try {
             Country::create([
-                'name'                  => $request -> name,
+                'name'                  => $request->name,
             ]);
-            return response()-> json([
-                'message'           => 'thanh cong',
+            return response()->json([
+                'message'           => 'Tạo mới thành công',
                 'status'            => true,
             ]);
         } catch (\Throwable $th) {
-            return response()-> json([
-                'message'           => 'that bai',
+            return response()->json([
+                'message'           => 'Lỗi tạo mới không thành công',
                 'status'             => false,
+                'err'             => $th,
             ]);
         }
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function data(Request $request)
     {
         $data = Country::get();
@@ -45,17 +43,17 @@ class CountryController extends Controller
     {
         try {
             $check_id = $request->id;
-            $data = Country::where("id", $check_id)->update([
-                'name'                  => $request -> name,
+            Country::where("id", $check_id)->update([
+                'name'                  => $request->name,
             ]);
             return response()->json([
                 'status' => true,
-                'message' => "update thành công !",
+                'message' => "Cập nhật thành công!",
             ]);
         } catch (\Throwable $th) {
             return response()->json([
                 'status' => false,
-                'message' => "update không thành công !",
+                'message' => "Lỗi cập nhật không thành công!",
                 'err' => $th
             ]);
         }
@@ -64,18 +62,22 @@ class CountryController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Request $request){
+    public function destroy(Request $request)
+    {
+        return response()->json([
+            'status'            =>   $request->all(),
+        ]);
         try {
-            Country::where('id',$request->id)->delete();
+            Country::where('id', $request->id)->delete();
             return response()->json([
                 'status'            =>   true,
                 'message'           =>   'Xóa thành công!',
             ]);
-        } catch (Exception $e) {
-            Log::info("Lỗi",$e);
+        } catch (\Throwable $th) {
             return response()->json([
-                'status'            =>   false,
-                'message'           =>   'Có lỗi',
+                'status' => false,
+                'message' => "Lỗi xóa không thành công!",
+                'err' => $th
             ]);
         }
     }

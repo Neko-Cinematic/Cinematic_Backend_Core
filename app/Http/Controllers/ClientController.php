@@ -12,17 +12,6 @@ use Illuminate\Support\Facades\Log;
 
 class ClientController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
     public function data()
     {
         $data = Client::get();
@@ -37,7 +26,7 @@ class ClientController extends Controller
             $pass_length = strlen($request->password);
             $pass = $request->password;
 
-            if($pass_length < 5 ){
+            if ($pass_length < 5) {
                 return response()->json([
                     'message'               => 'Mật khẩu quá yếu',
                     'status'                => false,
@@ -63,18 +52,7 @@ class ClientController extends Controller
         }
     }
 
-    public function show(Client $client)
-    {
-    }
-
-
-    public function edit(Client $client)
-    {
-    }
-
-
-
-    public function updateDataClient(Request $request)
+    public function update(Request $request)
     {
         try {
             $check_id = $request->id;
@@ -101,17 +79,16 @@ class ClientController extends Controller
     public function destroy(Request $request)
     {
         try {
-            $data = Client::where("id", $request->id)->first();
-            $data->delete();
+            Client::where("id", $request->id)->delete();
             return response()->json([
                 'status' => true,
                 'message' => "Xóa thành công!",
             ]);
-        } catch (Exception $e) {
-            Log::info("Lỗi", $e);
+        } catch (\Throwable $th) {
             return response()->json([
-                'status'            =>   false,
-                'message'           =>   'Xóa thất bại!',
+                'err' => $th,
+                'status' => false,
+                'message' => 'Lỗi không xóa thành công'
             ]);
         }
     }
@@ -134,11 +111,12 @@ class ClientController extends Controller
         }
     }
 
-    public function check(){
+    public function check()
+    {
         $user = Auth::guard('sanctum')->user();
 
         try {
-            if($user){
+            if ($user) {
                 return response()->json([
                     'name' => $user->name,
                     'email' => $user->email,
