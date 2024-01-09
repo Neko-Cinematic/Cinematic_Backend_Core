@@ -4,10 +4,20 @@ namespace App\Http\Controllers;
 
 use App\Models\Actor;
 use App\Http\Controllers\Controller;
+use App\Models\ActorRel;
+use App\Models\Image;
+use App\Models\TypeRel;
 use Illuminate\Http\Request;
 
 class ActorController extends Controller
 {
+    public function search(Request $request)
+    {
+        $data = Actor::where('name', 'like', '%' . $request->key . '%')->get();
+
+        return response()->json(['data' => $data]);
+    }
+
     public function data()
     {
         $data = Actor::select()->get();
@@ -17,10 +27,15 @@ class ActorController extends Controller
     public function store(Request $request)
     {
         try {
+            $image = Image::create([
+                'url' => $request->filename
+            ]);
+
             Actor::create([
                 'name' => $request->name,
-                'id_image' => $request->id_image,
+                'id_image' => $image->id,
             ]);
+
             return response()->json([
                 'status' => true,
                 'message' => "Tạo mới thành công!",
