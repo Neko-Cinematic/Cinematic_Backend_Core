@@ -5,14 +5,14 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Type extends Model
+class TypeRel extends Model
 {
     use HasFactory;
 
-    protected $table = 'types';
+    protected $table = 'type_rels';
 
     protected $fillable = [
-        'name',
-        'description'
+        'id_movie',
+        'id_type'
     ];
 }

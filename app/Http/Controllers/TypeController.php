@@ -11,6 +11,14 @@ use Illuminate\Support\Facades\Log;
 
 class TypeController extends Controller
 {
+    public function search(Request $request)
+    {
+        $data = Type::where('name', 'like', '%' . $request->key . '%')
+            ->get();
+
+        return response()->json(['data' => $data]);
+    }
+
     public function data()
     {
         $data = Type::select()->get();

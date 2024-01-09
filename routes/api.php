@@ -10,6 +10,7 @@ use App\Http\Controllers\EpisodeController;
 use App\Http\Controllers\LanguageController;
 use App\Http\Controllers\MovieController;
 use App\Http\Controllers\TypeController;
+use App\Http\Controllers\TypeRelController;
 use App\Http\Controllers\UpFileController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -61,6 +62,7 @@ Route::group(['prefix' => 'admin'], function () {
         Route::post('/delete', [TypeController::class, 'destroy']);
         Route::post('/update', [TypeController::class, 'update']);
         Route::post('/get-data', [TypeController::class, 'data']);
+        Route::post('/search', [TypeController::class, 'search']);
     });
     Route::group(['prefix' => 'client'], function () {
         Route::post('/create', [ClientController::class, 'store']);
@@ -82,12 +84,14 @@ Route::group(['prefix' => 'admin'], function () {
         Route::post('/delete', [ActorRelController::class, 'destroy']);
         Route::post('/update', [ActorRelController::class, 'update']);
         Route::post('/get-data', [ActorRelController::class, 'data']);
+        Route::post('/get-data-choosed', [ActorRelController::class, 'dataChoosed']);
     });
     Route::group(['prefix' => 'actor'], function () {
         Route::post('/create', [ActorController::class, 'store']);
         Route::post('/delete', [ActorController::class, 'destroy']);
         Route::post('/update', [ActorController::class, 'update']);
         Route::post('/get-data', [ActorController::class, 'data']);
+        Route::post('/search', [ActorController::class, 'search']);
     });
     // Route::group(['prefix' => 'favourite'], function () {
     //     Route::post('/create', [FavouritesController::class, 'store']);
@@ -95,12 +99,13 @@ Route::group(['prefix' => 'admin'], function () {
     //     Route::post('/update', [FavouritesController::class, 'update']);
     //     Route::post('/get-data', [FavouritesController::class, 'data']);
     // });
-    // Route::group(['prefix' => 'type-rel'], function () {
-    //     Route::post('/create', [TypeRelController::class, 'store']);
-    //     Route::post('/delete', [TypeRelController::class, 'destroy']);
-    //     Route::post('/update', [TypeRelController::class, 'update']);
-    //     Route::post('/get-data', [TypeRelController::class, 'data']);
-    // });
+    Route::group(['prefix' => 'type-rel'], function () {
+        Route::post('/create', [TypeRelController::class, 'store']);
+        Route::post('/delete', [TypeRelController::class, 'destroy']);
+        Route::post('/update', [TypeRelController::class, 'update']);
+        Route::post('/get-data', [TypeRelController::class, 'data']);
+        Route::post('/get-data-choosed', [TypeRelController::class, 'dataChoosed']);
+    });
 
     Route::post('/up-file', [UpFileController::class, 'upFile']);
 });
