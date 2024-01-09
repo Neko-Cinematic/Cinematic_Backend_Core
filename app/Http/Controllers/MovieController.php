@@ -29,10 +29,7 @@ class MovieController extends Controller
             ->join('images', 'images.id', 'movies.id_image')
             ->join('authors', 'authors.id', 'movies.id_author')
             ->select(
-                'movies.id',
-                'movies.id_image',
-                'movies.description',
-                'movies.original_name',
+                'movies.*',
                 DB::raw('CONCAT("' . env('APP_URL') . '", images.url) as url'),
                 'authors.name as author_name',
                 'countries.name as country_name',
@@ -40,6 +37,24 @@ class MovieController extends Controller
                 'languages.name as language_name',
                 DB::raw("DATE_FORMAT(movies.date, '%d/%m/%Y') as date")
             )->get();
+
+        foreach ($data as $movie) {
+            $movie['list_type'] = '';
+            $movie['list_actor'] = '';
+            $list_type = TypeRel::join('types', 'type_rels.id_type', 'types.id')
+                ->where('type_rels.id_movie', $movie->id)->select('types.name')->get();
+            if ($list_type !== null) {
+                foreach ($list_type as $type) $movie['list_type'] .= $type->name . ',';
+            }
+            $list_actor = ActorRel::join('actors', 'actors.id', 'actor_rels.id_actor')
+                ->where('actor_rels.id_movie', $movie->id)
+                ->select('actors.name')->get();
+            if ($list_actor !== null) {
+                foreach ($list_actor as $actor) $movie['list_actor'] .= $actor->name . ',';
+            }
+            $movie['list_type'] = rtrim($movie['list_type'], ',');
+            $movie['list_actor'] = rtrim($movie['list_actor'], ',');
+        }
         return response()->json(['data' => $data]);
     }
 

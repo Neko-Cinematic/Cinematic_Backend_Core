@@ -30,10 +30,11 @@ class EmployeeController extends Controller
             ]);
         }
     }
-    public function check(){
+    public function check()
+    {
         $user = Auth::guard('sanctum')->user();
         try {
-            if($user){
+            if ($user) {
                 return response()->json([
                     'name' => $user->name,
                     'email' => $user->email,
@@ -52,9 +53,9 @@ class EmployeeController extends Controller
     {
         try {
             Employee::create([
-                'name'              => $request -> name,
-                'email'             => $request -> email,
-                'password'          => bcrypt($request -> password),
+                'name'              => $request->name,
+                'email'             => $request->email,
+                'password'          => bcrypt($request->password),
             ]);
             return response()->json([
                 'status'  => true,
@@ -84,9 +85,9 @@ class EmployeeController extends Controller
         try {
             $check_id = $request->id;
             $data = Employee::where("id", $check_id)->update([
-                'name'                  => $request -> name,
-                'email'                 => $request -> email,
-                'password'              => $request -> password,
+                'name'                  => $request->name,
+                'email'                 => $request->email,
+                'password'              => $request->password,
             ]);
             return response()->json([
                 'status' => true,
@@ -102,15 +103,16 @@ class EmployeeController extends Controller
         }
     }
 
-        public function destroy(Request $request){
+    public function destroy(Request $request)
+    {
         try {
-            Employee::where('id',$request->id)->delete();
+            Employee::where('id', $request->id)->delete();
             return response()->json([
                 'status'            =>   true,
                 'message'           =>   'Xóa thành công!',
             ]);
         } catch (Exception $e) {
-            Log::info("Lỗi",$e);
+            Log::info("Lỗi", $e);
             return response()->json([
                 'status'            =>   false,
                 'message'           =>   'Có lỗi',

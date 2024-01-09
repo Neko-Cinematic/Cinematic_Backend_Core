@@ -11,20 +11,13 @@ use Illuminate\Support\Facades\Log;
 
 class AuthorController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        //
-    }
 
     public function data()
     {
         $data = Author::join('images', 'images.id', 'authors.id_images')
-        ->join("movies","authors.id","id_author")
-        ->select('original_name','images.url', 'authors.*')
-  ->get();
+            ->join("movies", "authors.id", "id_author")
+            ->select('original_name', 'images.url', 'authors.*')
+            ->get();
         return response()->json([
             'data'   => $data,
         ]);
