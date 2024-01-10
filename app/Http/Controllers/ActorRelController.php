@@ -13,7 +13,7 @@ class ActorRelController extends Controller
     public function dataChoosed(Request $request)
     {
         $data = ActorRel::join('actors', 'actors.id', 'actor_rels.id_actor')
-            ->where('actor_rels.id_movie', 0)
+            ->where('actor_rels.id_movie', $request->id_movie)
             ->select('actors.name', 'actor_rels.role', 'actor_rels.id')
             ->get();
 

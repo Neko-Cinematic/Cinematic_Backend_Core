@@ -38,7 +38,7 @@ class ActorController extends Controller
             $actor['list_phim'] = rtrim($actor['list_phim'], ',');
         }
 
-        return response()->json($data);
+        return response()->json(['data' => $data]);
     }
 
     public function store(Request $request)

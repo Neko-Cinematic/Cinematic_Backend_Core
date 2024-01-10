@@ -5,9 +5,23 @@ namespace App\Http\Controllers;
 use App\Models\Episode;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class EpisodeController extends Controller
 {
+    public function getDataEpisode(Request $request)
+    {
+        $data = Episode::join('movies', 'id_movies', 'movies.id')
+            ->where('episodes.id_movies', $request->id_movies)
+            ->where('episodes.id', $request->id_num)
+            ->select(
+                DB::raw('CONCAT("' . env('APP_URL') . '", episodes.url) as url_movie'),
+                'original_name',
+                'episodes.*',
+            )->get();
+        return response()->json(['data' => $data]);
+    }
+
     public function data(Request $request)
     {
         $data = Episode::join('movies', 'id_movies', 'movies.id')

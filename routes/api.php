@@ -32,6 +32,8 @@ Route::group(['prefix' => 'admin'], function () {
         Route::post('/delete', [MovieController::class, 'destroy']);
         Route::post('/update', [MovieController::class, 'update']);
         Route::post('/get-data', [MovieController::class, 'data']);
+        Route::post('/get-one-movie', [MovieController::class, 'dataOneMovie']);
+        Route::post('/get-detail', [MovieController::class, 'dataDetail']);
     });
     Route::group(['prefix' => 'language'], function () {
         Route::post('/create', [LanguageController::class, 'store']);
@@ -44,6 +46,7 @@ Route::group(['prefix' => 'admin'], function () {
         Route::post('/delete', [EpisodeController::class, 'destroy']);
         Route::post('/update', [EpisodeController::class, 'update']);
         Route::post('/get-data', [EpisodeController::class, 'data']);
+        Route::post('/get-ep', [EpisodeController::class, 'getDataEpisode']);
     });
     Route::group(['prefix' => 'author'], function () {
         Route::post('/create', [AuthorController::class, 'store']);

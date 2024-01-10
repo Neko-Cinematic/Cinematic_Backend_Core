@@ -21,6 +21,14 @@ use Illuminate\Support\Facades\File;
 
 class MovieController extends Controller
 {
+
+    public function dataOneMovie(Request $request)
+    {
+        $data = Movie::where('id', $request->id_movie)->first();
+
+        return response()->json(['data' => $data]);
+    }
+
     public function data()
     {
         $data = Movie::join('languages', 'movies.id_language_original', 'languages.id')
@@ -39,21 +47,69 @@ class MovieController extends Controller
             )->get();
 
         foreach ($data as $movie) {
-            $movie['list_type'] = '';
-            $movie['list_actor'] = '';
+            $movie['types'] = '';
+            $movie['actors'] = '';
+            $movie['roles'] = '';
             $list_type = TypeRel::join('types', 'type_rels.id_type', 'types.id')
                 ->where('type_rels.id_movie', $movie->id)->select('types.name')->get();
             if ($list_type !== null) {
-                foreach ($list_type as $type) $movie['list_type'] .= $type->name . ',';
+                foreach ($list_type as $type) $movie['types'] .= $type->name . ',';
             }
             $list_actor = ActorRel::join('actors', 'actors.id', 'actor_rels.id_actor')
                 ->where('actor_rels.id_movie', $movie->id)
-                ->select('actors.name')->get();
+                ->select('actors.name', 'actor_rels.role')->get();
             if ($list_actor !== null) {
-                foreach ($list_actor as $actor) $movie['list_actor'] .= $actor->name . ',';
+                foreach ($list_actor as $actor) {
+                    $movie['actors'] .= $actor->name . ',';
+                    $movie['roles'] .= $actor->role . ',';
+                }
             }
-            $movie['list_type'] = rtrim($movie['list_type'], ',');
-            $movie['list_actor'] = rtrim($movie['list_actor'], ',');
+            $movie['types'] = rtrim($movie['types'], ',');
+            $movie['actors'] = rtrim($movie['actors'], ',');
+            $movie['roles'] = rtrim($movie['roles'], ',');
+        }
+        return response()->json(['data' => $data]);
+    }
+
+    public function dataDetail(Request $request)
+    {
+        $data = Movie::join('languages', 'movies.id_language_original', 'languages.id')
+            ->join('countries', 'countries.id', 'movies.id_contries')
+            ->join('employees', 'employees.id', 'movies.id_user_upload')
+            ->join('images', 'images.id', 'movies.id_image')
+            ->join('authors', 'authors.id', 'movies.id_author')
+            ->where('movies.id', $request->id_movie)
+            ->select(
+                'movies.*',
+                DB::raw('CONCAT("' . env('APP_URL') . '", images.url) as url'),
+                'authors.name as author_name',
+                'countries.name as country_name',
+                'employees.name as user_name',
+                'languages.name as language_name',
+                DB::raw("DATE_FORMAT(movies.date, '%d/%m/%Y') as date")
+            )->get();
+
+        foreach ($data as $movie) {
+            $movie['types'] = '';
+            $movie['actors'] = '';
+            $movie['roles'] = '';
+            $list_type = TypeRel::join('types', 'type_rels.id_type', 'types.id')
+                ->where('type_rels.id_movie', $movie->id)->select('types.name')->get();
+            if ($list_type !== null) {
+                foreach ($list_type as $type) $movie['types'] .= $type->name . ',';
+            }
+            $list_actor = ActorRel::join('actors', 'actors.id', 'actor_rels.id_actor')
+                ->where('actor_rels.id_movie', $movie->id)
+                ->select('actors.name', 'actor_rels.role')->get();
+            if ($list_actor !== null) {
+                foreach ($list_actor as $actor) {
+                    $movie['actors'] .= $actor->name . ',';
+                    $movie['roles'] .= $actor->role . ',';
+                }
+            }
+            $movie['types'] = rtrim($movie['types'], ',');
+            $movie['actors'] = rtrim($movie['actors'], ',');
+            $movie['roles'] = rtrim($movie['roles'], ',');
         }
         return response()->json(['data' => $data]);
     }
@@ -105,11 +161,11 @@ class MovieController extends Controller
 
     public function update(Request $request)
     {
+        return response()->json(['data' => $request->all()]);
         try {
             $movie = Movie::where("id", $request->id)->update([
                 'original_name' => $request->original_name,
                 'vietnamese_name' => $request->vietnamese_name,
-                'id_image' => $request->id_image,
                 'description' => $request->description,
                 'id_contries' => $request->id_contries,
                 'id_author' => $request->id_author,
@@ -134,17 +190,24 @@ class MovieController extends Controller
     {
         try {
             $image = Image::where('id', $request->id_image)->first();
-            $arr = explode('/', $image->url);
-            if (Storage::disk('public/images')->exists($arr[2])) {
-                return response()->json('Có');
-                Storage::disk('public/images')->delete($arr[2]);
-            }
-            // $image->delete();
-            // Movie::where("id", $request->id)->delete();
-            return response()->json([
-                'status' => true,
-                'message' => "Xóa thành công!",
-            ]);
+            $filePath = public_path(ltrim($image->url, '/'));
+            if (File::exists($filePath)) {
+                if (File::delete($filePath)) {
+                    $image->delete();
+                    return response()->json([
+                        'status' => true,
+                        'message' => "Xóa thành công!",
+                    ]);
+                } else
+                    return response()->json([
+                        'status' => false,
+                        'message' => "Có lỗi trong quá trình xóa file!",
+                    ]);
+            } else
+                return response()->json([
+                    'status' => false,
+                    'message' => "Không tìm thấy file!",
+                ]);
         } catch (\Throwable $th) {
             return response()->json([
                 'status' => false,

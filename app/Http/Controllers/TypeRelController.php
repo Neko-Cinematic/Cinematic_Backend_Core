@@ -24,10 +24,10 @@ class TypeRelController extends Controller
         }
     }
 
-    public function dataChoosed()
+    public function dataChoosed(Request $request)
     {
         $data = TypeRel::join('types', 'types.id', 'type_rels.id_type')
-            ->where('type_rels.id_movie', 0)
+            ->where('type_rels.id_movie', $request->id_movie)
             ->select('types.name', 'type_rels.id')
             ->get();
 
